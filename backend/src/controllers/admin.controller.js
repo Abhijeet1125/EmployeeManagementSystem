@@ -240,7 +240,7 @@ const updateAdminDetails = asyncHandler(async(req, res) => {
 
     return res
     .status(200)
-    .json(new ApiResponse(200, admin , "Account details updated successfully"))
+    .json(new ApiResponse(200, admin , "Admin details updated successfully"))
 });
 
 
