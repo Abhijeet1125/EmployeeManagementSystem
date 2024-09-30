@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import { NavLink, useNavigate } from "react-router-dom"
+import { getAdmin , logout} from "../databaseFunctions/admin"
+import { useDispatch , useSelector } from "react-redux";
+import {logout as logout_dispatch , login as login_dispatch } from "../store/slices/admin_slice.js"
+
 
 
 const Header = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setUserMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
-  const [login, setLogin] = useState(true);
-  const [user, setUser] = useState(null);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const login = useSelector ( (state)=> state.admin.isAuthenticated)
+  const username = useSelector ( (state)=> state.admin.data.username)
   const choices = ["Home", "Employees", "Departments", "Attendance", "Salary", "Feedback", "Transactions"];
 
   const ToggleTheme = () => {
@@ -21,6 +27,45 @@ const Header = () => {
     }
     setDarkMode((e) => !e)
   }
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  const toggleUserMenu = ()=> {
+    setUserMenuOpen ( e => ! e )
+  }
+
+  const routeSignIn = () => {
+    navigate('/sign-in')
+  }
+
+  const logoutfun = async ()=> {
+
+    try {
+      await logout()
+      dispatch ( logout_dispatch())
+      navigate ('/')
+    } catch (error) {      
+      console.error ( "error in logout ")
+    }
+
+  }
+
+
+  useEffect(() => {
+    const adminfinded = async () => {
+      const admin = await getAdmin();
+      if (admin) {        
+        dispatch ( login_dispatch ( admin.data  ))
+      } else {
+        setLogin(false);
+      }
+    };
+
+    adminfinded();
+  }, []);
+
 
   return (
     <header className="w-full bg-gray-300 dark:bg-background-secondary fixed top-0 p-4 flex justify-between items-center ">
@@ -37,7 +82,7 @@ const Header = () => {
                   to={`/${item}`}
                   className={({ isActive }) =>
                     `block py-2 pr-4 pl-3 duration-200 lg:hover:bg-transparent lg:border-0 hover:text-orange-700 lg:p-0  ${(isActive && ("text-orange-600"))}`
-                  }
+                  }                  
                 >
                   {item}
                 </NavLink>
@@ -52,7 +97,9 @@ const Header = () => {
       <div className="hidden md:flex items-center space-x-4">
         {!login ? (
           <>
-            <button className="dark:text-text-primary text-black hover:text-accent-primary">Sign in</button>
+            <button className="dark:text-text-primary text-black hover:text-accent-primary"
+              onClick={routeSignIn}
+            >Sign in</button>
           </>
         ) : (
           <div className="relative">
@@ -61,7 +108,7 @@ const Header = () => {
               className="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center"
             >
               {/* Example of user icon */}
-              <span className="text-white">U</span>
+              <span className="text-white"> { username[0].toUpperCase()} </span>
             </button>
             {isUserMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-200 dark:bg-background-secondary rounded-lg shadow-lg py-2">
@@ -70,7 +117,9 @@ const Header = () => {
                   onClick={ToggleTheme} >
                   Toggle Theme
                 </button>
-                <button className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100 dark:text-text-primary dark:hover:bg-background-tertiary">
+                <button className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100 dark:text-text-primary dark:hover:bg-background-tertiary"
+                  onClick={()=>{logoutfun(); toggleUserMenu();}}
+                >
                   Logout
                 </button>
               </div>
@@ -114,7 +163,9 @@ const Header = () => {
             })}
             {!login ? (
               <li>
-                <button className="text-black dark:text-text-secondary hover:text-blue-700 hover:bg-gray-100 dark:hover:bg-background-tertiary">
+                <button className="text-black dark:text-text-secondary hover:text-blue-700 hover:bg-gray-100 dark:hover:bg-background-tertiary"
+                  onClick={() => { routeSignIn(); toggleMobileMenu(); }}
+                >
                   Sign in
                 </button>
               </li>
@@ -123,14 +174,16 @@ const Header = () => {
                 {/* Display "Toggle Theme" and "Logout" directly without user button */}
                 <li>
                   <button
-                    onClick={ToggleTheme}
+                    onClick={ ()=> { ToggleTheme () ; toggleMobileMenu();}}
                     className="block w-full text-left px-4 py-2 text-black dark:text-text-secondary hover:text-orange-700 hover:bg-gray-100 dark:hover:bg-background-tertiary"
                   >
                     Toggle Theme
                   </button>
                 </li>
                 <li>
-                  <button className="block w-full text-left px-4 py-2 text-black dark:text-text-secondary hover:text-orange-700 hover:bg-gray-100 dark:hover:bg-background-tertiary">
+                  <button className="block w-full text-left px-4 py-2 text-black dark:text-text-secondary hover:text-orange-700 hover:bg-gray-100 dark:hover:bg-background-tertiary"
+                    onClick={()=>{logoutfun(); toggleMobileMenu();}}
+                  >
                     Logout
                   </button>
                 </li>

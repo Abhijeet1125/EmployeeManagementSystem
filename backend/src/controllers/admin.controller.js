@@ -79,13 +79,13 @@ const loginAdmin = asyncHandler(async (req, res) =>{
     })
 
     if (!admin) {
-        throw new ApiError(404, "User does not exist")
+        throw new ApiError(304, "User does not exist")
     }
 
    const isPasswordValid = await admin.isPasswordCorrect(password)
 
    if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid user credentials")
+    throw new ApiError(306, "Invalid user credentials")
     }
 
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(admin._id)
@@ -94,7 +94,7 @@ const loginAdmin = asyncHandler(async (req, res) =>{
 
     const options = {
         httpOnly: true,
-        secure: false  ,
+        secure : false
     }
 
     return res
