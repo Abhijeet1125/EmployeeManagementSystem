@@ -68,7 +68,8 @@ const Header = () => {
 
 
   return (
-    <header className="w-full bg-gray-300 dark:bg-background-secondary fixed top-0 p-4 flex justify-between items-center ">
+    //fixed removed from here
+    <header className="w-full sticky z-50 bg-gray-300 dark:bg-background-secondary  top-0 p-4 flex justify-between items-center ">
       {/* Logo Section */}
       <div className="text-accent-primary text-lg font-bold">Logo</div>
 

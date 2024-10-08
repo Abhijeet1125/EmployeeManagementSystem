@@ -1,15 +1,18 @@
-import { Outlet } from 'react-router-dom'
-import { Header } from '../components'
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import { Header } from '../components';
 
-function Layout() {
-    return (
-        <>            
-            <div className='dark:bg-background-primary bg-gray-50 min-h-screen'>
-                <Header />
-                <Outlet />
-            </div>
-        </>
-    )
-}
+const Layout = () => {  
 
-export default Layout
+  return (
+    <>
+      <Header/>
+      <main>        
+        <Outlet />
+      </main>
+    </>
+  );
+};
+
+
+export default Layout;

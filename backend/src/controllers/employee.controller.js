@@ -88,17 +88,51 @@ const updateEmployeeDetails = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .json(new ApiResponse(200, employee , "Employee details updated successfully"))
+        .json(new ApiResponse(200, employee, "Employee details updated successfully"))
 });
 
 
+const EmployeeList = asyncHandler(async (req, res) => {
+    const { page = 1, PatternOn, Pattern } = req.query;
+    
+    let matchQuery = {};
 
+    if (PatternOn && Pattern) {
+        const patternField = PatternOn; 
+        matchQuery[patternField] = { $regex: new RegExp(Pattern, 'i') };
+    }
 
+    const aggregateQuery = Employee.aggregate([
+        { $match: matchQuery }, 
+        {
+            $project: {
+                firstname: 1,
+                lastname: 1,
+                email: 1,
+                gender: 1,
+                payfrom: 1,
+            },
+        },
+    ]);
+
+    const options = {
+        page: parseInt(page), 
+        limit: 20,            
+    };
+    
+    const result = await Employee.aggregatePaginate(aggregateQuery, options);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, result , "Employee List fetched successfully"))
+    
+});
 
 
 
 
 export {
     registerEmployee,
+    EmployeeList,
     updateEmployeeDetails
 }
