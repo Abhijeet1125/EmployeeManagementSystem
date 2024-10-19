@@ -11,7 +11,7 @@ const login = async (formData) => {
   const email = formData.emailOrUsername;
   const password = formData.password;
   const username = email;
-
+  console.log("LOGIN",email,password);
   try {
     const response = await axiosInstance.post('/admin/login', {
       email: email,
