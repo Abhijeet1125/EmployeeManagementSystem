@@ -71,7 +71,37 @@ const upadateDesignation  = asyncHandler(async (req, res) => {
 });
 
 
+const getDesignation = asyncHandler(async (req, res) => {
+    const { page = 1, PatternOn, Pattern } = req.query;
 
+    let matchQuery = {};
+
+    if (PatternOn && Pattern) {
+        const patternField = PatternOn;
+        matchQuery[patternField] = { $regex: new RegExp(Pattern, 'i') };
+    }
+
+    const aggregateQuery = Designation.aggregate([
+        { $match: matchQuery },
+        {
+            $project: {
+                designationName: 1,
+                description: 1,            
+            },
+        },
+    ]);
+
+    const options = {
+        page: parseInt(page),
+        limit: 20,
+    };
+
+    const result = await Designation.aggregatePaginate(aggregateQuery, options);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, result, "Designation List fetched successfully"))
+});
 
 
 
@@ -80,4 +110,5 @@ const upadateDesignation  = asyncHandler(async (req, res) => {
 export {
    registerDesignation , 
    upadateDesignation , 
+   getDesignation,
 }

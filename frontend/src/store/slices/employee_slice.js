@@ -3,14 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     emplist: {},
     headers: {
-        "First Name" :"firstname",
-        "Last Name" : "lastname",
-        "Email" : "email",
-        "Gender" : "gender",
-        "Payment From" :  "payfrom",
+        "firstname" : "First Name",
+        "lastname" : "Last Name",
+        "email":"Email" ,
+        "gender":"Gender" ,
+        "payfrom":"Payment From",
     },
     loading: true ,
-
+    patternOn : "", 
+    pattern : "" ,
+    pageno  : "1", 
 
 };
 
@@ -24,8 +26,17 @@ const employeeSlice = createSlice({
         emplist: (state , action ) => {
             state.emplist = action.payload
         },
+        patternOn : ( state , action ) => {
+            state.patternOn = action.payload
+        },
+        pattern : ( state , action ) => {
+            state.pattern = action.payload
+        },
+        pageno : ( state , action ) => {
+            state.pageno = action.payload 
+        }
     },
 });
 
-export const { loading , emplist  } = employeeSlice.actions;
+export const { loading , emplist , pageno , pattern , patternOn } = employeeSlice.actions;
 export default employeeSlice.reducer; 

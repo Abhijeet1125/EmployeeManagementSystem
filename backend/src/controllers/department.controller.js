@@ -7,16 +7,16 @@ import { Department } from './../models/department.model.js';
 
 const registerDepartment = asyncHandler(async (req, res) => {
 
-    const { departmentname , location , head , desc  } = req.body
+    const { departmentname, location, head, desc } = req.body
 
     if (
-        [departmentname , location ].some((field) => field?.trim() === "")
+        [departmentname, location].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "Fill the required fields")
     }
 
-    const existed  = await Department.findOne({
-        departmentname ,
+    const existed = await Department.findOne({
+        departmentname,
         location
     })
 
@@ -25,10 +25,10 @@ const registerDepartment = asyncHandler(async (req, res) => {
     }
 
 
-    const department  = await Department.create({
-        departmentname , 
-        location , 
-        head , 
+    const department = await Department.create({
+        departmentname,
+        location,
+        head,
         desc
     })
 
@@ -49,10 +49,10 @@ const registerDepartment = asyncHandler(async (req, res) => {
 
 
 const updateDepartment = asyncHandler(async (req, res) => {
-    const { id ,  departmentname , location , head , desc  } = req.body
+    const { id, departmentname, location, head, desc } = req.body
 
     if (
-        [ id , departmentname , location ].some((field) => field?.trim() === "")
+        [id, departmentname, location].some((field) => field?.trim() === "")
     ) {
         throw new ApiError(400, "Fill the required fields")
     }
@@ -61,9 +61,9 @@ const updateDepartment = asyncHandler(async (req, res) => {
         id,
         {
             $set: {
-                departmentname , 
-                location , 
-                head , 
+                departmentname,
+                location,
+                head,
                 desc
             }
         },
@@ -73,17 +73,49 @@ const updateDepartment = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .json(new ApiResponse(200, department , "Department details updated successfully"))
+        .json(new ApiResponse(200, department, "Department details updated successfully"))
 });
 
 
 
 
+const getDepartment = asyncHandler(async (req, res) => {
+    const { page = 1, PatternOn, Pattern } = req.query;
 
+    let matchQuery = {};
+
+    if (PatternOn && Pattern) {
+        const patternField = PatternOn;
+        matchQuery[patternField] = { $regex: new RegExp(Pattern, 'i') };
+    }
+
+    const aggregateQuery = Department.aggregate([
+        { $match: matchQuery },
+        {
+            $project: {
+                departmentname: 1,
+                location: 1,
+                desc: 1,
+            },
+        },
+    ]);
+
+    const options = {
+        page: parseInt(page),
+        limit: 20,
+    };
+
+    const result = await Department.aggregatePaginate(aggregateQuery, options);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, result, "Department List fetched successfully"))
+});
 
 
 
 export {
     registerDepartment,
-    updateDepartment
+    updateDepartment,
+    getDepartment,
 }
