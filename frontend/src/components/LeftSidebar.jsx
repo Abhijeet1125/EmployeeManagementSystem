@@ -1,14 +1,7 @@
 import { NavLink } from "react-router-dom";
 
-const LeftSidebar = () => {
-  const options = [
-    { name: "Overview", path: "" },
-    { name: "Employee List", path: "./list" },
-    { name: "Add Employee", path: "./add-employee" },
-    // { name: "Logout", path: "./logout" },
-  ];
-
-
+const LeftSidebar = ( {options} ) => {
+  
   return (
     <div className="h-full flex flex-col justify-between p-4 overflow-hidden">
       <div>

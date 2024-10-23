@@ -14,7 +14,10 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
-
+app.get("/hello",(req,res)=>{
+    // console.log("Hello World !!!");
+    res.send("HELLO");
+})
 //routes import
 import adminRouter  from "./routes/admin.routes.js"
 import employeeRouter from "./routes/employee.routes.js"

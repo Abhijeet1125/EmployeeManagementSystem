@@ -14,10 +14,14 @@ const registerEmployee = asyncHandler(async (req, res) => {
     ) {
         throw new ApiError(400, "Fill the required fields")
     }
-
+    
     const existedEmployee = await Employee.findOne({
-        email
-    })
+        $or: [
+            { email: email },
+            { mobileno: mobileno }
+        ]
+    });
+
 
     if (existedEmployee) {
         throw new ApiError(409, "Employee with email already exists")
@@ -94,16 +98,16 @@ const updateEmployeeDetails = asyncHandler(async (req, res) => {
 
 const EmployeeList = asyncHandler(async (req, res) => {
     const { page = 1, PatternOn, Pattern } = req.query;
-    
+
     let matchQuery = {};
 
     if (PatternOn && Pattern) {
-        const patternField = PatternOn; 
+        const patternField = PatternOn;
         matchQuery[patternField] = { $regex: new RegExp(Pattern, 'i') };
     }
 
     const aggregateQuery = Employee.aggregate([
-        { $match: matchQuery }, 
+        { $match: matchQuery },
         {
             $project: {
                 firstname: 1,
@@ -116,23 +120,38 @@ const EmployeeList = asyncHandler(async (req, res) => {
     ]);
 
     const options = {
-        page: parseInt(page), 
-        limit: 20,            
+        page: parseInt(page),
+        limit: 20,
     };
-    
+
     const result = await Employee.aggregatePaginate(aggregateQuery, options);
 
     return res
         .status(200)
-        .json(new ApiResponse(200, result , "Employee List fetched successfully"))
-    
+        .json(new ApiResponse(200, result, "Employee List fetched successfully"))
+
 });
 
+
+const getEmp = asyncHandler(async (req, res) => {
+    const { id } = req.query
+
+    const employee = await Employee.findById(id)
+
+    if (!employee) {
+        throw new ApiError(500, `for this id ${id}  Something went wrong while fetching the employee`)
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, employee, "Employee data fetched successfully"))
+});
 
 
 
 export {
     registerEmployee,
     EmployeeList,
-    updateEmployeeDetails
+    updateEmployeeDetails,
+    getEmp
 }

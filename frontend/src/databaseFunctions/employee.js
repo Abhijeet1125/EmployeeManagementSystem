@@ -19,5 +19,33 @@ const getEmpList = async ({on , pat , page })=>{
     }
 }
 
+const addEmp  = async ( formData )=>{
+    try {        
+        const res  = await axiosInstance.post (`/employee/register` , formData)  
+        console.log ( res , " response from axios")      
+        return res ; 
+    } catch (error) {
+        throw error 
+    }
+}
 
-export  { getEmpList }
+const getEmp = async ( {id})=>{
+    try {
+        const res = await  axiosInstance.get ( `employee/get-emp?id=${id}`);
+        return res.data ; 
+    } catch (error) {
+        console.log ( error )
+        throw error
+    }
+}
+
+const updateEmp  = async ( formData )=>{
+    try {        
+        const res  = await axiosInstance.post (`/employee/update` , formData)             
+        return res ; 
+    } catch (error) {
+        throw error 
+    }
+}
+
+export  { getEmpList , addEmp , getEmp , updateEmp}
