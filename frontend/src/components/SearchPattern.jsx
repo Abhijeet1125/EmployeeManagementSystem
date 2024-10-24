@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { pattern as patternReducer, patternOn as patternOnReducer } from "../store/slices/employee_slice";
 
-const SearchPattern = ({ path }) => {
-    const dropdownOptions = useSelector(state => state[path].headers);
+const SearchPattern = ({ path , patternOnReducer , patternReducer}) => {
+    const dropdownOptions = useSelector(state => state[path].searchOn);
     const [selectedOption, setSelectedOption] = useState('');
     const [textInput, setTextInput] = useState('');
     const dispatch = useDispatch();

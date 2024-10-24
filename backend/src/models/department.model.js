@@ -16,10 +16,6 @@ const departmentSchema = new Schema (
         desc : {
             type : String ,
         },
-        head : { 
-            type : Schema.Types.ObjectId,
-            ref : "Employee"
-        }
     },
     {
         timestamps: true ,

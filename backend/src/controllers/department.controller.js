@@ -3,11 +3,12 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Department } from './../models/department.model.js';
+import { Employee } from "./../models/employee.model.js"
 
 
 const registerDepartment = asyncHandler(async (req, res) => {
 
-    const { departmentname, location, head, desc } = req.body
+    const { departmentname, location, desc } = req.body
 
     if (
         [departmentname, location].some((field) => field?.trim() === "")
@@ -28,7 +29,6 @@ const registerDepartment = asyncHandler(async (req, res) => {
     const department = await Department.create({
         departmentname,
         location,
-        head,
         desc
     })
 
@@ -113,9 +113,53 @@ const getDepartment = asyncHandler(async (req, res) => {
 });
 
 
+const getDepartmentDetails = asyncHandler(async (req, res) => {
+    const { id } = req.query;
+
+    // Find the department by id
+    const department = await Department.findById(id);
+
+    if (!department) {
+        throw new ApiError(404, `Department not found ${id} id `);
+    }
+
+    // Count the number of employees in this department
+    const employeeCount = await Employee.countDocuments({ department: id });
+
+    // Combine department details with employee count
+    const departmentDetails = {
+        department,
+        employeeCount
+    };
+
+    return res.status(200).json(
+        new ApiResponse(200, departmentDetails, "Department details fetched successfully")
+    );
+});
+
+
+const deleteDepartment = asyncHandler(async (req, res) => {
+    const { id } = req.query;
+
+    const department = await Department.findById(id);
+
+    if (!department) {
+        throw new ApiError(404, "Department not found");
+    }
+
+    await Department.findByIdAndDelete(id);
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "Department deleted successfully")
+    );
+});
+
+
 
 export {
     registerDepartment,
     updateDepartment,
     getDepartment,
+    getDepartmentDetails,
+    deleteDepartment,
 }

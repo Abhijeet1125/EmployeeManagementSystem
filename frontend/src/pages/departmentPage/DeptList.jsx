@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loading as loadingReducer, emplist as empListReducer , pattern as patternReducer , patternOn as patternOnReducer   } from '../../store/slices/employee_slice'
-import { getEmpList  } from "../../databaseFunctions/employee"
+import { loading as loadingReducer, deptlist as departmentReducer , pattern as patternReducer , patternOn as patternOnReducer } from '../../store/slices/department_slice'
+import {  getDeptList } from "../../databaseFunctions/department"
 import { SearchPattern, Pagination, Table } from '../../components';
 import { Loading } from '../../components';
 
@@ -10,9 +10,9 @@ import { Loading } from '../../components';
 
 const EmpList = () => {
 
-    const newPat = useSelector(state => state.employee.pattern);
-    const newPaton = useSelector(state => state.employee.patternOn);
-    const pageno = useSelector(state => state.employee.pageno);
+    const newPat = useSelector(state => state.department.pattern);
+    const newPaton = useSelector(state => state.department.patternOn);
+    const pageno = useSelector(state => state.department.pageno);
 
 
 
@@ -20,7 +20,7 @@ const EmpList = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const loading = useSelector((state) => state.employee.loading);
+    const loading = useSelector((state) => state.department.loading);
     const queryParams = new URLSearchParams(location.search);
     const patternOn = queryParams.get('PatternOn');
     const pattern = queryParams.get('Pattern');
@@ -31,8 +31,8 @@ const EmpList = () => {
         dispatch(loadingReducer(true))
         const caller = async () => {
             try {
-                const response = await getEmpList({ on: patternOn || "", pat: pattern || "", page: page || 1 });
-                dispatch(empListReducer(response));
+                const response = await getDeptList({ on: patternOn || "", pat: pattern || "", page: page || 1 });
+                dispatch(departmentReducer(response));
                 dispatch(loadingReducer(false));
             } catch (error) {
                 console.log(error);
@@ -52,13 +52,13 @@ const EmpList = () => {
             {!loading  && <>
                 <div className='min-h-full bg-gray-100  dark:bg-background-primary '>
                     <div className='p-4'>
-                        <SearchPattern path={"employee"} patternReducer={patternReducer} patternOnReducer={patternOnReducer}   />
+                        <SearchPattern path={"department" }  patternReducer={patternReducer} patternOnReducer={patternOnReducer} />
                     </div>
                     < div className='p-4'>
-                        <Table path={"employee"} listname={"emplist"} />
+                        <Table path={"department"} listname={"deptlist"} />
                     </div>
                     <div className='p-4'>
-                        <Pagination path={"employee"} listname={"emplist"} />
+                        <Pagination path={"department"} listname={"deptlist"} />
                     </div>
                 </div >
             </>
