@@ -8,22 +8,11 @@ const salarySchema = new Schema(
             ref: "Employee",
             required: true,
             index: true,
-        },
-        startdate: {
-            type: Date,
-            required : true ,
-        },
-        enddate: {
-            type: Date,
-        },
+        },        
         salary: {
             type: Number,
             required : true , 
-        },
-        payonholidays : {
-            type : Boolean ,
-            default : true , 
-        }
+        },        
     },
     {
         timestamps: true,

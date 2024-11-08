@@ -1,42 +1,50 @@
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
-import mongoose from "mongoose";
 import { Attendance } from './../models/attendance.model.js';
 
 
-const registerAttendance = asyncHandler(async (req, res) => {
-    const attendanceData = req.body;
+const markAttendance = asyncHandler(async (req, res) => {
+    const { date, workday, id } = req.body;
 
-    for (const attendance of attendanceData) {
-        if (!attendance.employee || !attendance.date || !attendance.workday) {
-            throw new ApiError(400, "Fill the required fields");
-        }
-
-        const existingAttendance = await Attendance.findOne({
-            employee: attendance.employee,
-            date: attendance.date,
-        });
-
-        if (existingAttendance) {
-            await Attendance.findByIdAndUpdate(existingAttendance._id, attendance, {
-                new: true,
-                runValidators: true, // Ensure enum and other validations are triggered
-            });
-        } else {
-            const newAttendance = new Attendance(attendance);
-            await newAttendance.save();
-        }
+    if (!id || !date || !workday) {
+        throw new ApiError(400, "Employee ID, date, and workday are required.");
     }
 
+    const attendance = await Attendance.findOneAndUpdate(
+        { employee: id, date },
+        { workday },
+        { upsert: true, new: true }
+    );
+
+    if (!attendance) {
+        throw new ApiError(500, "Error in marking attendance");
+    }
     return res.status(201).json(
-        new ApiResponse(200, { "updated count": attendanceData.length }, "Attendance registered successfully")
+        new ApiResponse(200, attendance, "Attendance registered successfully")
+    );
+
+});
+
+const getAttendanceForMonth = asyncHandler(async (req, res) => {
+    const { id, year, month } = req.body;
+
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+
+    // Fetch only the `workday` and `date` fields
+    const attendanceRecords = await Attendance.find({
+        employee: id,
+        date: { $gte: startDate, $lte: endDate }
+    }).select("workday date"); // Selecting only `workday` and `date` fields
+
+    return res.status(200).json(
+        new ApiResponse(200, attendanceRecords, "Attendance fetched successfully")
     );
 });
 
- 
-
 
 export {
-    registerAttendance,
-}
+    markAttendance,
+    getAttendanceForMonth
+};

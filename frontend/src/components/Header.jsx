@@ -17,7 +17,7 @@ const Header = () => {
 
   const login = useSelector ( (state)=> state.admin.isAuthenticated)
   const username = useSelector ( (state)=> state.admin.data.username)
-  const choices = ["Home", "Employees", "Departments", "Designation", "Attendance", "Salary", "Feedback", "Transactions"];
+  const choices = ["Home", "Employees", "Departments", "Designations",  "Transactions"];
 
   const ToggleTheme = () => {
     if (darkMode) {

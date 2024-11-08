@@ -3,67 +3,125 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Salary } from './../models/Salary.model.js';
+import { Employee } from "./../models/employee.model.js"
+import { Attendance } from "./../models/attendance.model.js"
+import { Transaction } from "../models/transaction.model.js";
 
 
 const registerSalary = asyncHandler(async (req, res) => {
-    const { employee, startdate, salary, payonholidays } = req.body;
+    const { employee, salary } = req.body;
 
-    if (!employee || !startdate || !salary) {
-        throw new ApiError(400, "Please provide required fields: employee, startdate, salary");
+    // Check if a salary record already exists for the employee
+    let existingSalary = await Salary.findOne({ employee });
+
+    if (existingSalary) {
+        // Update the existing salary record
+        existingSalary.salary = salary;
+        await existingSalary.save();
+
+        return res.status(200).json(
+            new ApiResponse(200, existingSalary, "Salary updated successfully")
+        );
+    } else {
+        // Create a new salary record
+        const newSalary = await Salary.create({ employee, salary });
+
+        if (!newSalary) {
+            throw new ApiError(400, "Salary registration failed");
+        }
+
+        return res.status(201).json(
+            new ApiResponse(201, newSalary, "Salary registered successfully")
+        );
     }
-
-    // Check if there is a previous salary record for this employee
-    const previousSalary = await Salary.findOne({ employee }).sort({ startdate: -1 });
-
-    if (previousSalary) {
-        // Update the enddate of the previous record to startdate - 1
-        previousSalary.enddate = new Date(new Date(startdate).setDate(new Date(startdate).getDate() - 1));
-        await previousSalary.save();
-    }
-
-    // Create the new salary record
-    const newSalary = new Salary({
-        employee,
-        startdate,
-        salary,
-        payonholidays: payonholidays !== undefined ? payonholidays : true, // Use the default if not provided
-    });
-
-    await newSalary.save();
-
-    return res.status(201).json(
-        new ApiResponse(200,  newSalary, "Salary registered successfully")
-    );
 });
 
 
-const updateLastSalaryAmount = asyncHandler(async (req, res) => {
-    const { employee, newSalaryAmount } = req.body;
+const getSalary = asyncHandler(async (req, res) => {
+    const { employeeId } = req.body;
 
-    if (!employee || !newSalaryAmount) {
-        throw new ApiError(400, "Please provide required fields: employee, newSalaryAmount");
+    const salaryRecords = await Salary.find({ employee: employeeId });
+
+    if (!salaryRecords || salaryRecords.length === 0) {
+        throw new ApiError(404, "No salary records found for this employee");
     }
-
-    // Find the latest salary record for the employee
-    const lastSalary = await Salary.findOne({ employee }).sort({ startdate: -1 });
-
-    if (!lastSalary) {
-        throw new ApiError(404, "No salary record found for this employee");
-    }
-
-    // Update the salary
-    lastSalary.salary = newSalaryAmount;
-    await lastSalary.save();
 
     return res.status(200).json(
-        new ApiResponse (200,  lastSalary, "Salary registered successfully")
+        new ApiResponse(200, salaryRecords, "Salary records retrieved successfully")
     );
 });
 
- 
+
+const calculatePayment = asyncHandler(async (req, res) => {
+    const { employeeId, endDate } = req.body;
+
+
+    const employee = await Employee.findById(employeeId);
+    if (!employee) {
+        throw new ApiError(404, `Employee not found  id  ${employee}`);
+    }
+
+    const salaryRecord = await Salary.findOne({ employee: employeeId }).sort({ createdAt: -1 });
+    if (!salaryRecord) {
+        throw new ApiError(404, "Salary record not found for this employee");
+    }
+
+    const startDate = employee.payfrom;
+    const salary = salaryRecord.salary;
+
+
+    const attendanceRecords = await Attendance.find({
+        employee: employeeId,
+        date: { $gte: startDate, $lte: new Date(endDate) },
+        workday: "Full Day",
+    });
+
+    const fullDaysWorked = attendanceRecords.length;
+    const payment = fullDaysWorked * salary;
+
+    return res.status(200).json(
+        new ApiResponse(200, { payment, fullDaysWorked, startDate }, "Payment calculated successfully")
+    );
+});
+
+const setPayFrom = asyncHandler(async (req, res) => {
+    const { employeeId, payfrom, startDate, transId, paymentAmount } = req.body;
+
+    const transaction = new Transaction({
+        employee: employeeId,
+        transactionId: transId,
+        fromDate: startDate,
+        toDate: payfrom,
+        paymentAmount: paymentAmount,
+    });
+
+    await transaction.save();
+
+
+    const newPayFromDate = new Date(payfrom);
+    newPayFromDate.setDate(newPayFromDate.getDate() + 1); // Increment by one day
+
+    const updatedEmployee = await Employee.findByIdAndUpdate(
+        employeeId,
+        { payfrom: newPayFromDate },
+        { new: true }
+    );
+
+    if (!updatedEmployee) {
+        throw new ApiError(404, "Employee not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, updatedEmployee, "Pay from date updated and transaction recorded successfully")
+    );
+});
+
 
 
 export {
     registerSalary,
-    updateLastSalaryAmount
+    getSalary,
+    calculatePayment,
+    setPayFrom
+
 }

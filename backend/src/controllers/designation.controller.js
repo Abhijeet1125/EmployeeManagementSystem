@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Designation } from './../models/designation.model.js';
+import { Employee } from './../models/employee.model.js';
 
 
 const registerDesignation = asyncHandler(async (req, res) => {
@@ -104,6 +105,48 @@ const getDesignation = asyncHandler(async (req, res) => {
 });
 
 
+const getDesignationDetails = asyncHandler(async (req, res) => {
+    const { id } = req.query;
+
+    // Find the designation by id
+    const designation = await Designation.findById(id);
+
+    if (!designation) {
+        throw new ApiError(404, `Designation not found with id: ${id}`);
+    }
+
+    const employeeCount = await Employee.countDocuments({ designation: id });
+
+    // Combine department details with employee count
+    const designationDetails = {
+        designation,
+        employeeCount
+    };
+
+
+    return res.status(200).json(
+        new ApiResponse(200, designationDetails, "Designation details fetched successfully")
+    );
+});
+
+
+const deleteDesignation = asyncHandler(async (req, res) => {
+    const { id } = req.query;
+
+    const designation = await Designation.findById(id);
+
+    if (!designation) {
+        throw new ApiError(404, "Designation not found");
+    }
+
+    await Designation.findByIdAndDelete(id);
+
+    return res.status(200).json(
+        new ApiResponse(200, null, "Designation deleted successfully")
+    );
+});
+
+
 
 
 
@@ -111,4 +154,6 @@ export {
    registerDesignation , 
    upadateDesignation , 
    getDesignation,
+   getDesignationDetails,
+   deleteDesignation
 }

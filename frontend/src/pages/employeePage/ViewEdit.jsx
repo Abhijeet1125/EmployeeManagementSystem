@@ -4,6 +4,7 @@ import { Loading as LoadingComp } from '../../components';
 import { getDeptList } from "../../databaseFunctions/department"
 import { getDesigList } from "../../databaseFunctions/designation"
 import { getEmp, updateEmp } from "../../databaseFunctions/employee"
+import { EmployeeMenu } from '../../components';
 
 const EmployeeDetails = () => {
 
@@ -90,6 +91,9 @@ const EmployeeDetails = () => {
       {Loading && (<LoadingComp />)}
       {!Loading && <>
         <div className="dark:bg-background-primary bg-gray-100 p-6  shadow-md h-full">
+          
+          < EmployeeMenu id={id} />
+          
           {/* Personal Details */}
           <div className="mb-4">
             <h2 className="text-lg font-semibold dark:text-text-primary text-black mb-2">Personal Details</h2>

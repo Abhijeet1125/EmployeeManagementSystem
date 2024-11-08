@@ -14,8 +14,7 @@ const attendanceSchema = new Schema(
             index: true,
         },
         workday: {
-            type: String,
-            enum: ["Full Day", "Half Day", "Holiday", "Paid Leave", "LWP"],
+            type: String,            
             required: true, 
         },
     },

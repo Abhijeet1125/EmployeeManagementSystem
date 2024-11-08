@@ -44,10 +44,27 @@ const deleteFeedback  = asyncHandler ( async ( req , res ) => {
 
 })
 
- 
+const getEmployeeFeedback = asyncHandler(async (req, res) => {
+    const { employeeId } = req.query;
+
+    if (!employeeId) {
+        throw new ApiError(400, "Employee ID is required");
+    }
+
+    
+    const feedbackList = await Feedback.find({ employee: employeeId })
+        .sort({ date: -1 })  
+        .exec();
+
+    
+    return res.status(200).json(
+        new ApiResponse(200, feedbackList, "Feedback fetched successfully")
+    );
+});
 
 
 export {
     registerFeedback,
-    deleteFeedback
+    deleteFeedback,
+    getEmployeeFeedback,
 }
