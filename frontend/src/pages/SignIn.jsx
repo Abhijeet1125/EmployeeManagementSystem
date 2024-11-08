@@ -27,7 +27,8 @@ const SignIn = () => {
     }
 
     setError(''); 
-
+    console.log("to signin");
+    
     try {    
       const response = await login(formData);
       console.log('Login successful, response:', response.data.user); 
