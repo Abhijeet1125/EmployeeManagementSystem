@@ -21,7 +21,7 @@ const getAttendance = async ( selectedYear , selectedMonth , id )=>{
 
 const markAttendance = async ( date , workday , id  )=>{
     try {
-        const res = await axiosInstance.post ("/attendance/mark/" , {"date" : date  , "workday":  workday, "id": id })        
+        const res = await axiosInstance.post ("/attendance/mark" , {"date" : date  , "workday":  workday, "id": id })        
         console.log ( res.data.data , "response aaya h ye ")
     } catch (error) {
         console.log ( "error" , error);

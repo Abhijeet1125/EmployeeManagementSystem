@@ -3,20 +3,15 @@ import { Loading, InfoCard } from "../../components";
 import { useNavigate, useParams } from "react-router-dom";
 import { getDepartmentDetails, updateDepartment, deleteDept } from "../../databaseFunctions/department";
 
-
-
 const DepartmentDetails = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
-
     const [formData, setFormData] = useState({});
     const [employees, setEmployees] = useState(0);
-
     useEffect(() => {
-
         const fetchdata = async () => {
             const res = await getDepartmentDetails(id)
             setFormData(res.data.department);
@@ -26,14 +21,10 @@ const DepartmentDetails = () => {
         fetchdata()
 
     }, [])
-
-
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-
     const toggleEdit = () => {
         if (isEditing) {
             // Save logic here if required
@@ -44,23 +35,19 @@ const DepartmentDetails = () => {
                 setLoading(false)
             }
             upd()
-
         }
         setIsEditing(!isEditing);
     };
 
     const onDelete = () => {
-
         setLoading(true)
         const del = async () => {
             await deleteDept(id)
             setLoading(false)
-            navigate('../list')
+            navigate('..')
         }
         del()
-
     }
-
     return (
         <>
             {loading && <Loading />}

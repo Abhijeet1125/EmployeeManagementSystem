@@ -1,10 +1,10 @@
-import { mongoose, Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const attendanceSchema = new Schema(
+const attendeceSchema = new mongoose.Schema(
     {
         employee: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Employee",
             required: true,
             index: true,
@@ -14,16 +14,13 @@ const attendanceSchema = new Schema(
             index: true,
         },
         workday: {
-            type: String,            
-            required: true, 
-        },
+            type: String,
+            required: true,
+        }
     },
-    {
-        timestamps: true,
-    }
-);
+    { timestamps: true }
+)
 
-attendanceSchema.plugin(mongooseAggregatePaginate)
+attendeceSchema.plugin(mongooseAggregatePaginate);
 
-
-export const Attendance = mongoose.model("Attendance", attendanceSchema)
+export const Attendance = mongoose.model("Attendance", attendeceSchema);

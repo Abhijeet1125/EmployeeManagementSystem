@@ -33,7 +33,7 @@ const AddDepartment = () => {
       try {
         await registerDept(formData)
         setLoading(false);
-        navigate('../list')
+        navigate('..')
       } catch (error) {
         setLoading(false);
         setError("Department Name and Location must be unique")

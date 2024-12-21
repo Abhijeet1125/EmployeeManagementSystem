@@ -63,10 +63,10 @@ const employeeSchema = new Schema (
         timestamps: true ,
     }
 )
+//1 for accending and -1 for decending
 employeeSchema.index({ firstname: 1 });
 employeeSchema.index({ email: 1 });
 
 employeeSchema.plugin(mongooseAggregatePaginate)
-
 
 export const Employee = mongoose.model("Employee" , employeeSchema)

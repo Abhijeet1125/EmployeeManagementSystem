@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loading as loadingReducer, desiglist as desigListReducer, pattern as patternReducer, patternOn as patternOnReducer } from '../../store/slices/designation_slice';
 import { getDesigList } from "../../databaseFunctions/designation";
-import { SearchPattern, Pagination, Table } from '../../components';
-import { Loading } from '../../components';
+import { SearchPattern, Pagination, Table, Loading } from '../../components';
 
 const DesignationList = () => {
   const newPat = useSelector(state => state.designation.pattern);
@@ -23,7 +22,7 @@ const DesignationList = () => {
 
   useEffect(() => {
     dispatch(loadingReducer(true));
-    const caller = async () => {
+    const fetchData = async () => {
       try {
         const response = await getDesigList({ on: patternOn || "", pat: pattern || "", page: page || 1 });
         dispatch(desigListReducer(response));
@@ -31,8 +30,8 @@ const DesignationList = () => {
       } catch (error) {
         console.log(error);
       }
-    }
-    caller();
+    };
+    fetchData();
   }, [patternOn, pattern, page]);
 
   useEffect(() => {
@@ -43,22 +42,33 @@ const DesignationList = () => {
     <>
       {loading && <Loading />}
       {!loading && (
-        <>
-          <div className='min-h-full bg-gray-100 dark:bg-background-primary'>
-            <div className='p-4'>
+        <div
+          className="h-full bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://empmonitor.com/blog/wp-content/uploads/2021/08/Work-from-home.jpg')`,
+          }}
+        >
+          {/* Semi-transparent overlay for better readability */}
+          <div className="min-h-full bg-gray-900 bg-opacity-50">
+            <div className="p-4">
               <SearchPattern path={"designation"} patternReducer={patternReducer} patternOnReducer={patternOnReducer} />
             </div>
-            <div className='p-4'>
+            <div className="p-4 flex justify-center items-center bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-all duration-300 w-1/5 mx-auto">
+              <Link to="add-designation" className="font-semibold text-lg">
+                Add Designation
+              </Link>
+            </div>
+            <div className="p-4">
               <Table path={"designation"} listname={"desiglist"} />
             </div>
-            <div className='p-4'>
+            <div className="p-4">
               <Pagination path={"designation"} listname={"desiglist"} />
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );
-}
+};
 
 export default DesignationList;

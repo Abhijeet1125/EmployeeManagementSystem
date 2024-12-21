@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
-import { NavLink, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate,Link } from "react-router-dom"
 import { getAdmin , logout} from "../databaseFunctions/admin"
 import { useDispatch , useSelector } from "react-redux";
 import {logout as logout_dispatch , login as login_dispatch } from "../store/slices/admin_slice.js"
-
-
 
 const Header = () => {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -17,7 +15,7 @@ const Header = () => {
 
   const login = useSelector ( (state)=> state.admin.isAuthenticated)
   const username = useSelector ( (state)=> state.admin.data.username)
-  const choices = ["Home", "Employees", "Departments", "Designations",  "Transactions"];
+  const choices = ["Home", "Employees", "Departments", "Designations"];
 
   const ToggleTheme = () => {
     if (darkMode) {
@@ -45,13 +43,11 @@ const Header = () => {
     try {
       await logout()
       dispatch ( logout_dispatch())
-      navigate ('/')
+      navigate ('/home')
     } catch (error) {      
       console.error ( "error in logout ")
     }
-
   }
-
 
   useEffect(() => {
     const adminfinded = async () => {
@@ -62,16 +58,21 @@ const Header = () => {
         setLogin(false);
       }
     };
-
     adminfinded();
-  }, []);
+  }, [login]);
 
 
   return (
     //fixed removed from here
-    <header className="w-full sticky z-50 bg-gray-300 dark:bg-background-secondary  top-0 p-4 flex justify-between items-center ">
+    <header className="w-full z-50 bg-gray-300 dark:bg-background-secondary  top-0 p-4 flex justify-between items-center ">
       {/* Logo Section */}
-      <div className="text-accent-primary text-lg font-bold">Logo</div>
+      <div className="text-accent-primary text-lg font-bold">
+        <Link
+        to={'Home'}
+        >
+        Logo
+        </Link>
+      </div>
 
       {/* Navigation Links (visible on desktop only) */}
       <nav className="hidden md:flex space-x-6">
@@ -92,8 +93,6 @@ const Header = () => {
           })}
         </ul>
       </nav>
-
-
       {/* User/Login */}
       <div className="hidden md:flex items-center space-x-4">
         {!login ? (
@@ -118,6 +117,13 @@ const Header = () => {
                   onClick={ToggleTheme} >
                   Toggle Theme
                 </button>
+
+                <button className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100 dark:text-text-primary dark:hover:bg-background-tertiary"
+                onClick={()=>navigate('/admin/profile')}
+                >
+                  Profile
+                </button>
+
                 <button className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100 dark:text-text-primary dark:hover:bg-background-tertiary"
                   onClick={()=>{logoutfun(); toggleUserMenu();}}
                 >
@@ -193,8 +199,6 @@ const Header = () => {
           </ul>
         </nav>
       )}
-
-
     </header>
   );
 };

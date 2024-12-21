@@ -38,6 +38,8 @@ const getDesignationDetails = async (id) => {
 };
 
 const updateDesignation = async (fData) => {
+  console.log("upd desg ",fData);
+  
   try {
     const res = await axiosInstance.post('/designation/update', fData);
     return res.data;

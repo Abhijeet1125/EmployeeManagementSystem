@@ -13,6 +13,7 @@ const AttendanceCalendar = () => {
     const { id } = useParams();
     const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
     const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+    console.log(selectedMonth, selectedYear);
 
     useEffect(() => {
         setLoading(true);
@@ -41,11 +42,12 @@ const AttendanceCalendar = () => {
         const record = attendanceData.find((d) => d.date.startsWith(dateString));
         return record ? record.workday : null;
     };
+    console.log("attdata ", attendanceData);
 
     const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     return (
-        <> {loading && <Loading />} { <>
+        <> {loading && <Loading />} {<>
             <div className="h-full p-4 space-y-6 bg-gray-100 dark:bg-background-secondary">
                 <div className="flex justify-between mb-4">
                     <select
@@ -87,11 +89,10 @@ const AttendanceCalendar = () => {
                         const isUnmarked = !attendanceStatus;
 
                         const borderColor = attendanceStatus === 'Full Day'
-                            ? 'border-green-500'
+                            ? 'bg-green-500'
                             : attendanceStatus === 'Absent'
-                                ? 'border-red-500'
-                                : 'border-blue-500';
-
+                                ? 'bg-red-500'
+                                : 'bg-blue-200';
                         return (
                             <div
                                 key={index}

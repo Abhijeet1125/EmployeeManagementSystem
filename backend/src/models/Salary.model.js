@@ -1,25 +1,27 @@
 import { mongoose, Schema } from 'mongoose';
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const salarySchema = new Schema(
+const feedbackSchema = new Schema(
     {
         employee: {
             type: Schema.Types.ObjectId,
             ref: "Employee",
             required: true,
             index: true,
-        },        
-        salary: {
-            type: Number,
-            required : true , 
-        },        
+        },
+        date: {
+            type: Date,            
+        },
+        feedback : { 
+            type : String
+        }
     },
     {
         timestamps: true,
     }
 );
 
-salarySchema.plugin(mongooseAggregatePaginate)
+feedbackSchema.plugin(mongooseAggregatePaginate)
 
 
-export const Salary  = mongoose.model("Salary", salarySchema)
+export const Feedback = mongoose.model("Feedback", feedbackSchema)

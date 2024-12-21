@@ -47,7 +47,7 @@ const DesignationDetails = () => {
         const del = async () => {
             await deleteDesig(id);
             setLoading(false);
-            navigate('../list');
+            navigate('..');
         };
         del();
     };

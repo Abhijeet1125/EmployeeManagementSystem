@@ -8,17 +8,16 @@ const Table = ({ path, listname }) => {
     const navigate = useNavigate();
     const location = useLocation();
     
-
     const handleRowClick = (id) => {
-        const currentPath = location.pathname.split('/').slice(0, -1).join('/');
-        navigate(`${currentPath}/details/${id}`);
+        navigate(`${location.pathname}/details/${id}`);
     };
-
+    // console.log(data,path,listname,headers);
+    
     return (
-        <div className="overflow-x-auto rounded-md ">
+        <div className="overflow-x-auto rounded-md">
             <table className="min-w-full border-collapse table-auto">
                 <thead>
-                    <tr className="dark:bg-gray-700 bg-gray-200">
+                    <tr className="dark:bg-gray-700 bg-gray-200 bg-opacity-150">
                         {Object.keys(headers).map((key) => (
                             <th 
                                 key={key} 
@@ -33,11 +32,11 @@ const Table = ({ path, listname }) => {
                     {data.map((row, rowIndex) => (
                         <tr
                             key={rowIndex}
-                            className={
+                            className={`cursor-pointer ${
                                 rowIndex % 2 === 0
-                                    ? 'dark:bg-background-secondary bg-gray-100 cursor-pointer'
-                                    : 'dark:bg-background-tertiary bg-white cursor-pointer'
-                            }
+                                    ? 'dark:bg-background-secondary bg-gray-100 bg-opacity-100'
+                                    : 'dark:bg-background-tertiary bg-white bg-opacity-70'
+                            }`}
                             onClick={() => handleRowClick(row._id)}
                         >
                             {Object.keys(headers).map((key) => (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom"
-import { login  } from '../databaseFunctions/admin';
+import { login  } from '../databaseFunctions/admin.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { login as loginDispatch }from "../store/slices/admin_slice"
 

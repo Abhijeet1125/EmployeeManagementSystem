@@ -8,10 +8,8 @@ const axiosInstance = axios.create({
   withCredentials: true, 
 });
 
-
 const getSalary = async ( id  ) => {
-    try {
-                 
+    try {       
         const res = await axiosInstance.post ( "/salary/get" , {"employeeId" : id })
         return res.data.data;
        

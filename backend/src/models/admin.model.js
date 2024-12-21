@@ -1,41 +1,38 @@
-import { mongoose , Schema } from 'mongoose';
-import jwt  from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-
-const adminSchema = new Schema (
+const adminSchema = new mongoose.Schema(
     {
-        username:{
-            type : String,
-            required : true ,
-            unique : true ,
-            lowercase : true ,
-            trim : true ,
-            index : true ,
+        username: {
+            type: String,
+            unique: true,
+            required: true,
+            lowercase: true,
+            trim: true,
+            index: true,
         },
-        email : {
-            type : String ,
-            required : true,
-            unique : true ,
-            lowercase : true ,
-            trim : true ,
+        email: {
+            type:String,
+            unique: true,
+            required: true,
+            lowercase: true,
+            trim: true,
         },
-        fullname : { 
-            type : String ,
-            required : true ,
-            trim : true ,
+        fullname: {
+            type: String,
+            required: true,
+            trim: true,
         },
-        password : {
-            type : String ,
-            required : [ true , 'Password is required']
+        password: {
+            type: String,
+            required: [true, 'Password is required']
         },
-        refreshToken:{
-            type : String 
+        refreshToken: {
+            type: String,
         }
     },
-    {
-        timestamps: true ,
-    }
+    { timestamps: true }
 )
 
 adminSchema.pre ( 'save' , async function ( next ) {
@@ -62,6 +59,7 @@ adminSchema.methods.generateAccessToken = function(){
         }
     )
 }
+
 adminSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
@@ -73,5 +71,4 @@ adminSchema.methods.generateRefreshToken = function(){
         }
     )
 }
-
-export const Admin = mongoose.model("Admin" , adminSchema)
+export const Admin = mongoose.model('Admin', adminSchema) 

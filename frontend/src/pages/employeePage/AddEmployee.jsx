@@ -12,8 +12,6 @@ const AddEmployee = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    
-    
     useEffect(() => {
         const load = async () => {
             try {
@@ -28,7 +26,6 @@ const AddEmployee = () => {
         };
         load();
     }, []);
-
     const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
@@ -44,12 +41,10 @@ const AddEmployee = () => {
         workingdays: [],
         payfrom: new Date().toISOString().slice(0, 10),
     });
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-
     const handleWorkingDaysChange = (e) => {
         const { value, checked } = e.target;
         setFormData((prevState) => {
@@ -59,14 +54,13 @@ const AddEmployee = () => {
             return { ...prevState, workingdays: newWorkingDays };
         });
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading ( true )
         try {
             await addEmp ( formData)
             alert ("Employee adder sucessfully")
-            navigate ('../list')
+            navigate ('..')
         } catch (error) {
             console.log ( error , " error " );
             alert( "Employee with same email or mobile no exist");

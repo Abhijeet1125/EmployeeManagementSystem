@@ -11,7 +11,6 @@ const EmployeeDetails = () => {
   const { id } = useParams();
   const [Loading, setLoading] = useState(true);
 
-
   const [editPersonal, setEditPersonal] = useState(false);
   const [editJob, setEditJob] = useState(false);
   const [editOther, setEditOther] = useState(false);
@@ -42,18 +41,14 @@ const EmployeeDetails = () => {
     fetchEmployee();
 
   }, [id])
-
-
   // State for input fields
-
   const handleEditToggle = (section) => {
-
     setLoading(true)
     setEmp(formData)
     const upd = async () => {
       try {
         const res = await updateEmp(formData)
-        console.log ( res)
+        console.log(res)
       } catch (error) {
         console.log(error);
       }
@@ -91,9 +86,9 @@ const EmployeeDetails = () => {
       {Loading && (<LoadingComp />)}
       {!Loading && <>
         <div className="dark:bg-background-primary bg-gray-100 p-6  shadow-md h-full">
-          
+
           < EmployeeMenu id={id} />
-          
+
           {/* Personal Details */}
           <div className="mb-4">
             <h2 className="text-lg font-semibold dark:text-text-primary text-black mb-2">Personal Details</h2>

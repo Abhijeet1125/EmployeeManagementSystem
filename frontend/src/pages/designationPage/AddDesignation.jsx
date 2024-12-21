@@ -26,7 +26,7 @@ const AddDesignation = () => {
       try {
         await registerDesig(formData);
         setLoading(false);
-        navigate('../list');
+        navigate('..');
       } catch (error) {
         setLoading(false);
         setError("Designation Name must be unique");
